@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lab3;
 
-internal static class Program
+public static class Program
 {
     private static void Main()
     {

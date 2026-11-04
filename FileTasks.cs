@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace Lab3;
 
-internal static class FileTasks
+public static class FileTasks
 {
     public static void RunBinaryFilter()
     {

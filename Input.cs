@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Lab3;
 
-internal static class Input
+public static class Input
 {
     public static string ReadLine(string prompt)
     {

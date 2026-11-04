@@ -2,9 +2,9 @@ using System;
 
 namespace Lab3;
 
-internal sealed class Matrix
+public class Matrix
 {
-    private readonly long[,] _values;
+    private long[,] _values;
 
     public Matrix(int rows, int columns)
         : this(new long[rows, columns])
