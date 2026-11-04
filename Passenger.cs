@@ -4,6 +4,11 @@ public struct Passenger
 {
     private BaggageItem[] _items;
 
+    public Passenger(BaggageItem[] items)
+    {
+        _items = items;
+    }
+
     public BaggageItem[] Items
     {
         get
@@ -14,10 +19,5 @@ public struct Passenger
         {
             _items = value;
         }
-    }
-
-    public Passenger(BaggageItem[] items)
-    {
-        _items = items;
     }
 }

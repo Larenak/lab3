@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.IO;
 
 namespace Lab3;
@@ -72,19 +71,16 @@ internal static class Input
     {
         while (true)
         {
-            string text = ReadLine(prompt).Replace(',', '.');
+            string text = ReadLine(prompt);
 
-            if (decimal.TryParse(text,
-                NumberStyles.AllowDecimalPoint |
-                NumberStyles.AllowLeadingSign,
-                CultureInfo.InvariantCulture, out decimal value)
-                    && value > 0)
+            if (decimal.TryParse(text, out decimal value) &&
+                value > 0)
             {
                 return value;
             }
 
             Console.WriteLine(
-                "Введите число больше 0 (точка или запятая).");
+                "Введите число больше 0.");
         }
     }
 }

@@ -101,7 +101,8 @@ internal static class Program
         Console.WriteLine($"Первый массив:\n{first}");
         int size = Input.ReadInt(
             "Размер квадратных матриц (1–100): ", 1, 100);
-        var second = new Matrix(size, Random.Shared);
+        var random = new Random();
+        var second = new Matrix(size, random);
         var third = new Matrix(size);
         Console.WriteLine($"Второй массив:\n{second}");
         Console.WriteLine($"Третий массив:\n{third}");
@@ -115,11 +116,7 @@ internal static class Program
             3, 100);
         var matrix = new Matrix(rows, columns);
         Console.WriteLine($"Исходный массив:\n{matrix}");
-        Matrix result = matrix.FindMaximumSubmatrix(out long sum,
-            out int row, out int column);
-        Console.WriteLine(
-            $"Начало: [{row + 1}, {column + 1}].\n{result}");
-        Console.WriteLine($"Максимальная сумма: {sum}");
+        matrix.PrintMaximumSubmatrix();
     }
 
     private static void RunMatrixExpression()

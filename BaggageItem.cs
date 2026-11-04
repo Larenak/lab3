@@ -5,6 +5,12 @@ public struct BaggageItem
     private string _name;
     private decimal _mass;
 
+    public BaggageItem(string name, decimal mass)
+    {
+        _name = name;
+        _mass = mass;
+    }
+
     public string Name
     {
         get
@@ -27,11 +33,5 @@ public struct BaggageItem
         {
             _mass = value;
         }
-    }
-
-    public BaggageItem(string name, decimal mass)
-    {
-        _name = name;
-        _mass = mass;
     }
 }

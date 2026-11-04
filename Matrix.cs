@@ -1,27 +1,10 @@
 using System;
-using System.Text;
 
 namespace Lab3;
 
 internal sealed class Matrix
 {
     private readonly long[,] _values;
-
-    public int Rows
-    {
-        get
-        {
-            return _values.GetLength(0);
-        }
-    }
-
-    public int Columns
-    {
-        get
-        {
-            return _values.GetLength(1);
-        }
-    }
 
     public Matrix(int rows, int columns)
         : this(new long[rows, columns])
@@ -83,8 +66,23 @@ internal sealed class Matrix
         _values = values;
     }
 
-    public Matrix FindMaximumSubmatrix(out long maximumSum,
-        out int bestRow, out int bestColumn)
+    public int Rows
+    {
+        get
+        {
+            return _values.GetLength(0);
+        }
+    }
+
+    public int Columns
+    {
+        get
+        {
+            return _values.GetLength(1);
+        }
+    }
+
+    public void PrintMaximumSubmatrix()
     {
         if (Rows < 3 || Columns < 3)
         {
@@ -92,9 +90,9 @@ internal sealed class Matrix
                 "Нужен массив не меньше 3 × 3.");
         }
 
-        maximumSum = long.MinValue;
-        bestRow = 0;
-        bestColumn = 0;
+        long maximumSum = long.MinValue;
+        var bestRow = 0;
+        var bestColumn = 0;
 
         for (var row = 0; row <= Rows - 3; row++)
         {
@@ -133,7 +131,11 @@ internal sealed class Matrix
             }
         }
 
-        return result;
+        int rowNumber = bestRow + 1;
+        int columnNumber = bestColumn + 1;
+        Console.WriteLine(
+            $"Начало: [{rowNumber}, {columnNumber}].\n{result}");
+        Console.WriteLine($"Максимальная сумма: {maximumSum}");
     }
 
     public static Matrix operator ~(Matrix matrix)
@@ -199,18 +201,26 @@ internal sealed class Matrix
 
     public override string ToString()
     {
-        var result = new StringBuilder();
+        var result = "";
 
         for (var row = 0; row < Rows; row++)
         {
             for (var column = 0; column < Columns; column++)
             {
-                result.Append($"{_values[row, column],14}");
+                string value = _values[row, column].ToString();
+
+                for (var space = value.Length; space < 14;
+                    space++)
+                {
+                    result += " ";
+                }
+
+                result += value;
             }
 
-            result.AppendLine();
+            result += "\n";
         }
 
-        return result.ToString();
+        return result;
     }
 }

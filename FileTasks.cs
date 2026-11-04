@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -38,10 +37,11 @@ internal static class FileTasks
         int minimum, int maximum)
     {
         using var writer = new BinaryWriter(File.Create(path));
+        var random = new Random();
 
         for (var index = 0; index < count; index++)
         {
-            var value = (int)Random.Shared.NextInt64(
+            var value = (int)random.NextInt64(
                 minimum, (long)maximum + 1);
             writer.Write(value);
         }
@@ -99,12 +99,23 @@ internal static class FileTasks
             "Введите m, кг: ");
         var serializer = new XmlSerializer(typeof(Passenger[]));
         using var reader = new BinaryReader(File.OpenRead(path));
-        using var textReader = new StringReader(
-            reader.ReadString());
-        var passengers = (Passenger[])(
-            serializer.Deserialize(textReader)
-            ?? throw new InvalidDataException(
-                "В файле нет сведений о пассажирах."));
+        int count = reader.ReadInt32();
+        object? data = serializer.Deserialize(reader.BaseStream);
+
+        if (data == null)
+        {
+            throw new InvalidDataException(
+                "В файле нет сведений о пассажирах.");
+        }
+
+        var passengers = (Passenger[])data;
+
+        if (passengers.Length != count)
+        {
+            throw new InvalidDataException(
+                "Неверное количество пассажиров в файле.");
+        }
+
         var found = false;
 
         for (var index = 0; index < passengers.Length; index++)
@@ -127,10 +138,15 @@ internal static class FileTasks
             }
         }
 
-        Console.WriteLine(
-            found
-                ? "Подходящий пассажир имеется."
-                : "Подходящего пассажира нет.");
+        if (found)
+        {
+            Console.WriteLine("Подходящий пассажир имеется.");
+        }
+        else
+        {
+            Console.WriteLine("Подходящего пассажира нет.");
+        }
+
         Console.WriteLine($"Файл: {path}");
     }
 
@@ -161,22 +177,24 @@ internal static class FileTasks
         }
 
         var serializer = new XmlSerializer(typeof(Passenger[]));
-        using var textWriter = new StringWriter(
-            CultureInfo.InvariantCulture);
-        serializer.Serialize(textWriter, passengers);
         using var writer = new BinaryWriter(File.Create(path));
-        writer.Write(textWriter.ToString());
+        writer.Write(count);
+        serializer.Serialize(writer.BaseStream, passengers);
     }
 
     public static void RunDifference()
     {
         string path = Path.Combine(PrepareDirectory(),
             "one-per-line.txt");
-        ReadRandomFileSettings(out int count, out int minimum,
-            out int maximum);
+        int count = Input.ReadInt(
+            "Количество чисел (1–10000): ", 1, 10000);
+        int minimum = Input.ReadInt(
+            "Минимальное случайное число: ");
+        int maximum = Input.ReadInt(
+            "Максимальное случайное число: ", minimum);
         FillTextFile(path, count, 1, minimum, maximum);
         Console.WriteLine("Исходный файл:");
-        Console.WriteLine(File.ReadAllText(path));
+        PrintTextFile(path);
         long difference = FindDifference(path);
         Console.WriteLine(
             $"Максимум минус минимум: {difference}");
@@ -187,36 +205,31 @@ internal static class FileTasks
     {
         string path = Path.Combine(PrepareDirectory(),
             "several-per-line.txt");
-        ReadRandomFileSettings(out int count, out int minimum,
-            out int maximum);
+        int count = Input.ReadInt(
+            "Количество чисел (1–10000): ", 1, 10000);
+        int minimum = Input.ReadInt(
+            "Минимальное случайное число: ");
+        int maximum = Input.ReadInt(
+            "Максимальное случайное число: ", minimum);
         int perLine = Input.ReadInt(
             "Количество чисел в строке (2–100): ", 2, 100);
         FillTextFile(path, count, perLine, minimum, maximum);
         Console.WriteLine("Исходный файл:");
-        Console.WriteLine(File.ReadAllText(path));
+        PrintTextFile(path);
         Console.WriteLine(
             $"Минимальный элемент: {FindMinimum(path)}");
         Console.WriteLine($"Файл: {path}");
-    }
-
-    private static void ReadRandomFileSettings(out int count,
-        out int minimum, out int maximum)
-    {
-        count = Input.ReadInt("Количество чисел (1–10000): ", 1,
-            10000);
-        minimum = Input.ReadInt("Минимальное случайное число: ");
-        maximum = Input.ReadInt("Максимальное случайное число: ",
-            minimum);
     }
 
     public static void FillTextFile(string path, int count,
         int perLine, int minimum, int maximum)
     {
         using var writer = new StreamWriter(path);
+        var random = new Random();
 
         for (var index = 0; index < count; index++)
         {
-            var value = (int)Random.Shared.NextInt64(
+            var value = (int)random.NextInt64(
                 minimum, (long)maximum + 1);
             writer.Write(value);
 
@@ -242,14 +255,12 @@ internal static class FileTasks
                 "Файл не содержит чисел.");
         }
 
-        int minimum = int.Parse(line,
-            CultureInfo.InvariantCulture);
+        int minimum = int.Parse(line);
         int maximum = minimum;
 
         while ((line = reader.ReadLine()) != null)
         {
-            int value = int.Parse(line,
-                CultureInfo.InvariantCulture);
+            int value = int.Parse(line);
 
             if (value < minimum)
             {
@@ -274,20 +285,21 @@ internal static class FileTasks
 
         while ((line = reader.ReadLine()) != null)
         {
-            string[] numbers = line.Split((char[]?)null,
-                StringSplitOptions.RemoveEmptyEntries);
+            string[] numbers = line.Split(' ');
 
             foreach (string number in numbers)
             {
-                int value = int.Parse(number,
-                    CultureInfo.InvariantCulture);
-
-                if (value < minimum)
+                if (number.Length > 0)
                 {
-                    minimum = value;
-                }
+                    int value = int.Parse(number);
 
-                found = true;
+                    if (value < minimum)
+                    {
+                        minimum = value;
+                    }
+
+                    found = true;
+                }
             }
         }
 
@@ -314,8 +326,9 @@ internal static class FileTasks
         {
             for (var index = 0; index < count; index++)
             {
-                writer.WriteLine(Input.ReadLine(
-                    $"Строка {index + 1}: "));
+                string line = Input.ReadLine(
+                    $"Строка {index + 1}: ");
+                writer.WriteLine(line);
             }
         }
 
@@ -331,7 +344,7 @@ internal static class FileTasks
         int copied = FilterLines(source, destination, symbol[0]);
         Console.WriteLine($"Скопировано строк: {copied}");
         Console.WriteLine("Содержимое нового файла:");
-        Console.WriteLine(File.ReadAllText(destination));
+        PrintTextFile(destination);
         Console.WriteLine($"Результат: {destination}");
     }
 
@@ -355,10 +368,23 @@ internal static class FileTasks
         return copied;
     }
 
+    private static void PrintTextFile(string path)
+    {
+        using var reader = new StreamReader(path);
+        string? line;
+
+        while ((line = reader.ReadLine()) != null)
+        {
+            Console.WriteLine(line);
+        }
+
+        Console.WriteLine();
+    }
+
     private static string PrepareDirectory()
     {
-        string path = Path.Combine(Environment.CurrentDirectory,
-            "data");
+        string directory = Directory.GetCurrentDirectory();
+        string path = Path.Combine(directory, "data");
         Directory.CreateDirectory(path);
         return path;
     }
