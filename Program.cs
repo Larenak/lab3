@@ -23,6 +23,8 @@ public static class Program
 
     private static void RunMenu()
     {
+        int choice;
+
         while (true)
         {
             Console.WriteLine("\nЛабораторная №3. Вариант 3");
@@ -39,7 +41,7 @@ public static class Program
             Console.WriteLine(
                 "8 — Строки с заданным первым символом");
             Console.WriteLine("0 — Выход");
-            int choice = Input.ReadInt("Выберите задание: ", 0,
+            choice = Input.ReadInt("Выберите задание: ", 0,
                 8);
 
             try

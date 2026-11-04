@@ -20,9 +20,11 @@ public static class Input
 
     public static string ReadText(string prompt)
     {
+        string text;
+
         while (true)
         {
-            string text = ReadLine(prompt).Trim();
+            text = ReadLine(prompt).Trim();
 
             if (text.Length > 0)
             {
@@ -36,11 +38,14 @@ public static class Input
     public static int ReadInt(string prompt, int minimum =
         int.MinValue, int maximum = int.MaxValue)
     {
+        string text;
+        int value;
+
         while (true)
         {
-            string text = ReadLine(prompt);
+            text = ReadLine(prompt);
 
-            if (int.TryParse(text, out int value) && value >=
+            if (int.TryParse(text, out value) && value >=
                 minimum && value <= maximum)
             {
                 return value;
@@ -53,9 +58,11 @@ public static class Input
 
     public static int ReadNonzeroInt(string prompt)
     {
+        int value;
+
         while (true)
         {
-            int value = ReadInt(prompt);
+            value = ReadInt(prompt);
 
             if (value != 0)
             {
@@ -69,11 +76,14 @@ public static class Input
 
     public static decimal ReadPositiveDecimal(string prompt)
     {
+        string text;
+        decimal value;
+
         while (true)
         {
-            string text = ReadLine(prompt);
+            text = ReadLine(prompt);
 
-            if (decimal.TryParse(text, out decimal value) &&
+            if (decimal.TryParse(text, out value) &&
                 value > 0)
             {
                 return value;

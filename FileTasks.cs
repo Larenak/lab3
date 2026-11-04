@@ -38,10 +38,11 @@ public static class FileTasks
     {
         using var writer = new BinaryWriter(File.Create(path));
         var random = new Random();
+        int value;
 
         for (var index = 0; index < count; index++)
         {
-            var value = (int)random.NextInt64(
+            value = (int)random.NextInt64(
                 minimum, (long)maximum + 1);
             writer.Write(value);
         }
@@ -54,12 +55,13 @@ public static class FileTasks
             source));
         using var writer = new BinaryWriter(File.Create(
             destination));
+        int value;
 
         while (
             reader.BaseStream.Position <
             reader.BaseStream.Length)
         {
-            int value = reader.ReadInt32();
+            value = reader.ReadInt32();
 
             if ((long)value % firstDivisor == 0 &&
                 (long)value % secondDivisor != 0)
@@ -117,15 +119,19 @@ public static class FileTasks
         }
 
         var found = false;
+        BaggageItem[] items;
+        BaggageItem item;
 
         for (var index = 0; index < passengers.Length; index++)
         {
-            BaggageItem[] items = passengers[index].Items;
+            items = passengers[index].Items;
             Console.WriteLine(
                 $"Пассажир {index + 1}: {items.Length} мест");
 
-            foreach (BaggageItem item in items)
+            for (var itemIndex = 0; itemIndex < items.Length;
+                itemIndex++)
             {
+                item = items[itemIndex];
                 Console.WriteLine(
                     $"  {item.Name}: {item.Mass} кг");
             }
@@ -155,20 +161,24 @@ public static class FileTasks
         int count = Input.ReadInt(
             "Количество пассажиров (1–100): ", 1, 100);
         var passengers = new Passenger[count];
+        int itemCount;
+        BaggageItem[] items;
+        string name;
+        decimal mass;
 
         for (var index = 0; index < count; index++)
         {
-            int itemCount = Input.ReadInt(
+            itemCount = Input.ReadInt(
                 $"Багаж пассажира {index + 1} (0–100): ", 0,
                 100);
-            var items = new BaggageItem[itemCount];
+            items = new BaggageItem[itemCount];
 
             for (var itemIndex = 0; itemIndex < itemCount;
                 itemIndex++)
             {
-                string name = Input.ReadText(
+                name = Input.ReadText(
                     $"Багаж {itemIndex + 1}, название: ");
-                decimal mass = Input.ReadPositiveDecimal(
+                mass = Input.ReadPositiveDecimal(
                     "Масса, кг: ");
                 items[itemIndex] = new BaggageItem(name, mass);
             }
@@ -226,10 +236,11 @@ public static class FileTasks
     {
         using var writer = new StreamWriter(path);
         var random = new Random();
+        int value;
 
         for (var index = 0; index < count; index++)
         {
-            var value = (int)random.NextInt64(
+            value = (int)random.NextInt64(
                 minimum, (long)maximum + 1);
             writer.Write(value);
 
@@ -257,10 +268,11 @@ public static class FileTasks
 
         int minimum = int.Parse(line);
         int maximum = minimum;
+        int value;
 
         while ((line = reader.ReadLine()) != null)
         {
-            int value = int.Parse(line);
+            value = int.Parse(line);
 
             if (value < minimum)
             {
@@ -282,16 +294,18 @@ public static class FileTasks
         int minimum = int.MaxValue;
         var found = false;
         string? line;
+        string[] numbers;
+        int value;
 
         while ((line = reader.ReadLine()) != null)
         {
-            string[] numbers = line.Split(' ');
+            numbers = line.Split(' ');
 
-            foreach (string number in numbers)
+            for (var index = 0; index < numbers.Length; index++)
             {
-                if (number.Length > 0)
+                if (numbers[index].Length > 0)
                 {
-                    int value = int.Parse(number);
+                    value = int.Parse(numbers[index]);
 
                     if (value < minimum)
                     {
@@ -322,11 +336,13 @@ public static class FileTasks
         int count = Input.ReadInt("Количество строк (1–1000): ",
             1, 1000);
 
+        string line;
+
         using (var writer = new StreamWriter(source))
         {
             for (var index = 0; index < count; index++)
             {
-                string line = Input.ReadLine(
+                line = Input.ReadLine(
                     $"Строка {index + 1}: ");
                 writer.WriteLine(line);
             }

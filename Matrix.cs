@@ -44,13 +44,14 @@ public class Matrix
         : this(new long[size, size])
     {
         long value = 1;
+        int column;
 
         for (var diagonal = 2 * size - 2; diagonal >= size - 1;
             diagonal--)
         {
             for (var row = size - 1; row >= 0; row--)
             {
-                int column = diagonal - row;
+                column = diagonal - row;
 
                 if (column < size)
                 {
@@ -93,12 +94,13 @@ public class Matrix
         long maximumSum = long.MinValue;
         var bestRow = 0;
         var bestColumn = 0;
+        long sum;
 
         for (var row = 0; row <= Rows - 3; row++)
         {
             for (var column = 0; column <= Columns - 3; column++)
             {
-                long sum = 0;
+                sum = 0;
 
                 for (var offsetRow = 0; offsetRow < 3;
                     offsetRow++)
@@ -202,12 +204,13 @@ public class Matrix
     public override string ToString()
     {
         var result = "";
+        string value;
 
         for (var row = 0; row < Rows; row++)
         {
             for (var column = 0; column < Columns; column++)
             {
-                string value = _values[row, column].ToString();
+                value = _values[row, column].ToString();
 
                 for (var space = value.Length; space < 14;
                     space++)
